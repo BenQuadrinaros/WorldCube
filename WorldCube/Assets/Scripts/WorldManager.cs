@@ -13,6 +13,7 @@ public class WorldManager : MonoBehaviour
     private int sound_sensor_read_value;
 
     //Sensor calibrated default values
+    private int sensor_calibration_cycles = 15;
     private int light_sensor_calibrated_value;
     private int heat_sensor_calibrated_value;
     private int water_sensor_calibrated_value;
@@ -42,12 +43,16 @@ public class WorldManager : MonoBehaviour
     private sensor_state sound_state = sensor_state.low;
 
     //VFX for extreme states
-    
+
+    //VFX for persistent effects
+    public Light vfx_lighting;
 
     // Start is called before the first frame update
     void Start()
     {
         //Calibrate sensor values
+        light_sensor_calibrated_value = 500;
+        light_sensor_read_value = 500;
 
         //Calculate HIGH, MED, and LOW values
     }
@@ -55,12 +60,73 @@ public class WorldManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(light_state != sensor_state.high && light_sensor_read_value > light_sensor_calibrated_value + light_sensor_thresholds[2]) {
-            Debug.Log("HIGH light state");
-            light_state = sensor_state.high;
-            for(int i = 0; i < 3; ++i) {
-                light_sensor_thresholds[i] += -1*threshold_modifier;
+        if(sensor_calibration_cycles > 0) {
+            //Read sensor values from Serial
+            if(Input.GetKey("up")) {
+                light_sensor_read_value++;
+            } else if(Input.GetKey("down")) {
+                light_sensor_read_value--;
             }
+
+            //Decypher and update tracked values
+
+            //State-based actions
+            if(light_state == sensor_state.high) {
+                //Display appropriate VFX
+                Debug.Log("HIGH light state");
+
+                //Check for state changes
+                if(light_sensor_read_value < light_sensor_calibrated_value + light_sensor_thresholds[1]) {
+                    light_state = sensor_state.medium;
+                    for(int i = 0; i < 3; ++i) {
+                        //Adjust thresholds to prevent flickering
+                        light_sensor_thresholds[i] += threshold_modifier;
+                    }
+                }
+            } else if(light_state == sensor_state.low) {
+                //Display appropriate VFX
+                Debug.Log("LOW light state");
+
+                //Check for state changes
+                if(light_sensor_read_value > light_sensor_calibrated_value + light_sensor_thresholds[1]) {
+                    light_state = sensor_state.low;
+                    for(int i = 0; i < 3; ++i) {
+                        //Adjust thresholds to prevent flickering
+                        light_sensor_thresholds[i] -= threshold_modifier;
+                    }
+                }
+            } else {
+                //Display appropriate VFX
+                Debug.Log("MED light state");
+
+                //Check for state changes
+                if(light_sensor_read_value > light_sensor_calibrated_value + light_sensor_thresholds[2]) {
+                    light_state = sensor_state.high;
+                    for(int i = 0; i < 3; ++i) {
+                        //Adjust thresholds to prevent flickering
+                        light_sensor_thresholds[i] -= threshold_modifier;
+                    }
+                } else if(light_sensor_read_value < light_sensor_calibrated_value + light_sensor_thresholds[0]) {
+                    light_state = sensor_state.low;
+                    for(int i = 0; i < 3; ++i) {
+                        //Adjust thresholds to prevent flickering
+                        light_sensor_thresholds[i] += threshold_modifier;
+                    }
+                }
+            }
+
+            //Persistent VFX
+            float light_ratio = (float)(light_sensor_read_value - light_sensor_calibrated_value) / (light_sensor_thresholds[2] - light_sensor_thresholds[0]);
+            light_ratio = Mathf.Max(Mathf.Min(light_ratio, 1), -1);
+            vfx_lighting.intensity = light_ratio * 2.5f + 2.5f;
+
+
+        } else {
+            //Read sensor values from Serial
+
+            //Decypher and update tracked values
+
+            --sensor_calibration_cycles;
         }
     }
 }
