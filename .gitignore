@@ -9,6 +9,7 @@
 /WorldCube/[Bb]uilds/
 /WorldCube/[Ll]ogs/
 /WorldCube/[Mm]emoryCaptures/
+/WorldCube/[Uu]serSettings/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/WorldCube/[Aa]ssets/**/*.meta
