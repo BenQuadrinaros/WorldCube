@@ -91,7 +91,7 @@ public class WorldManager : MonoBehaviour
             //State-based actions
             if(light_state == sensor_state.high) {
                 //Display appropriate VFX
-                Debug.Log("HIGH light state");
+                //Debug.Log("HIGH light state");
 
                 //Check for state changes
                 if(light_sensor_read_value < light_sensor_calibrated_value + light_sensor_thresholds[1]) {
@@ -103,7 +103,7 @@ public class WorldManager : MonoBehaviour
                 }
             } else if(light_state == sensor_state.low) {
                 //Display appropriate VFX
-                Debug.Log("LOW light state");
+                //Debug.Log("LOW light state");
 
                 //Check for state changes
                 if(light_sensor_read_value > light_sensor_calibrated_value + light_sensor_thresholds[1]) {
@@ -115,7 +115,7 @@ public class WorldManager : MonoBehaviour
                 }
             } else {
                 //Display appropriate VFX
-                Debug.Log("MED light state");
+                //Debug.Log("MED light state");
 
                 //Check for state changes
                 if(light_sensor_read_value > light_sensor_calibrated_value + light_sensor_thresholds[2]) {
@@ -135,7 +135,7 @@ public class WorldManager : MonoBehaviour
 
             if(heat_state == sensor_state.high) {
                 //Display appropriate VFX
-                Debug.Log("HIGH heat state");
+                //Debug.Log("HIGH heat state");
 
                 //Check for state changes
                 if(heat_sensor_read_value < heat_sensor_calibrated_value + heat_sensor_thresholds[1]) {
@@ -147,7 +147,7 @@ public class WorldManager : MonoBehaviour
                 }
             } else if(heat_state == sensor_state.low) {
                 //Display appropriate VFX
-                Debug.Log("LOW heat state");
+                //Debug.Log("LOW heat state");
 
                 //Check for state changes
                 if(heat_sensor_read_value > heat_sensor_calibrated_value + heat_sensor_thresholds[1]) {
@@ -159,7 +159,7 @@ public class WorldManager : MonoBehaviour
                 }
             } else {
                 //Display appropriate VFX
-                Debug.Log("MED heat state");
+                //Debug.Log("MED heat state");
 
                 //Check for state changes
                 if(heat_sensor_read_value > heat_sensor_calibrated_value + heat_sensor_thresholds[2]) {
@@ -179,7 +179,7 @@ public class WorldManager : MonoBehaviour
 
             if(touch_sensor_cooldown > 0) {
                 touch_sensor_cooldown -= Time.deltaTime;
-                Debug.Log("touch sensor jiggle time left: "+touch_sensor_cooldown);
+                //Debug.Log("touch sensor jiggle time left: "+touch_sensor_cooldown);
 
                 //Jiggle
                 go_cube_world.transform.localPosition += Time.deltaTime*Mathf.Sin(8*touch_sensor_cooldown)*Vector3.right +

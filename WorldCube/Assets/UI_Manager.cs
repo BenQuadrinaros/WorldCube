@@ -24,5 +24,13 @@ public class UI_Manager : MonoBehaviour
     void Update()
     {
         te_sensor_values.text = "Light Level: "+world_manager.light_sensor_read_value+"\nHeat Level: "+world_manager.heat_sensor_read_value;
+        //Current Pos: posX, posY, posZ
+        //Current Rot: rotX, rotY, rotZ
+        te_sensor_values.text += "\nCurrent Pos: "+CubeBehavior.Instance.transform.position.x+","+
+            CubeBehavior.Instance.transform.position.y +","+
+            CubeBehavior.Instance.transform.position.z;
+        te_sensor_values.text += "\nCurrent Rot: " + CubeBehavior.Instance.transform.eulerAngles.x + "," +
+    CubeBehavior.Instance.transform.eulerAngles.y + "," +
+    CubeBehavior.Instance.transform.eulerAngles.z;
     }
 }
