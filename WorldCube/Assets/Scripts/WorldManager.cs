@@ -42,7 +42,8 @@ public class WorldManager : MonoBehaviour
     private sensor_state sound_state = sensor_state.low;
 
     //VFX for extreme states
-
+    public ParticleSystem[] rainParticleSystems;
+    private bool rainOn = false;
     //VFX for persistent effects
     public GameObject go_cube_world;
     public Light vfx_lighting;
@@ -181,6 +182,28 @@ public class WorldManager : MonoBehaviour
                         heat_sensor_thresholds[i] += threshold_modifier;
                     }
                 }
+            }
+
+            // Test Water Sensor in scene
+            //if (Input.GetKeyDown("e"))
+            //{
+            //    water_sensor_read_value = true;
+            //}
+            //if (Input.GetKeyDown("q"))
+            //{
+            //    water_sensor_read_value = false;
+            //}
+
+            // Water State
+            if (water_sensor_read_value && !rainOn)
+            {
+                rainOn = true;
+                rainParticleSystems[0].Play();
+            }
+            else
+            {
+                rainOn = false;
+                rainParticleSystems[0].Pause();
             }
 
             /* Replace with new hold effect for touch sensor
