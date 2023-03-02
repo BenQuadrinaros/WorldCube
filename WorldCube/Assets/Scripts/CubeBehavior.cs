@@ -25,7 +25,7 @@ public class CubeBehavior : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        gameObject.transform.position = cubePosition;
+        //gameObject.transform.position = cubePosition;
         gameObject.transform.rotation = cubeRotation;
     }
 

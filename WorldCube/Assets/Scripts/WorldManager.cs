@@ -21,10 +21,10 @@ public class WorldManager : MonoBehaviour
 
     //Value thresholds for state changes
     private int threshold_modifier = 25;
-    private int[] light_sensor_thresholds = new int[] {-200, 0, 200};
-    private int[] heat_sensor_thresholds = new int[] {0, 100, 200};
+    private int[] light_sensor_thresholds = new int[] {-200, 0, 50};
+    private int[] heat_sensor_thresholds = new int[] {0, 20, 40};
     //private float water_sensor_cooldown = 0;
-    //private float touch_sensor_cooldown = 0;
+    private float touch_sensor_cooldown = 0;
     private int[] pressure_sensor_thresholds = new int[] {0, 150, 300};
     private int[] sound_sensor_thresholds = new int[] {0, 150, 300};
 
@@ -62,9 +62,25 @@ public class WorldManager : MonoBehaviour
         //Calculate HIGH, MED, and LOW values
     }
 
+    // Update is called once per frame
+    void Update() {
+        if(touch_sensor_cooldown > 0) {
+            touch_sensor_cooldown -= Time.deltaTime;
+            //Debug.Log("touch sensor jiggle time left: "+touch_sensor_cooldown);
+
+            if(touch_sensor_cooldown < 0) {
+                go_cube_world.transform.localPosition = Vector3.zero;
+            } else {
+                //Jiggle
+                go_cube_world.transform.localPosition += 5*Time.deltaTime*Mathf.Sin(8*touch_sensor_cooldown)*Vector3.right +
+                        5*Time.deltaTime*Mathf.Cos(20*touch_sensor_cooldown)*Vector3.up;
+            }
+        }
+    }
+
     void OnMessageArrived(string msg) {
         //Read sensor values from Serial
-        Debug.Log("New message for WorldManager: "+msg);
+        //Debug.Log("New message for WorldManager: "+msg);
         UpdateValues(msg);
     }
 
@@ -79,20 +95,21 @@ public class WorldManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void UpdateValues(string msg)
     {
         //Decypher and update tracked values
         string[] sensor_message = msg.Split(',');
         touch_sensor_read_value = sensor_message[0].Contains("TRUE");
-        msg = msg.Remove(0, msg.IndexOf(",")+1);
 
         string light_sensor_message = sensor_message[1].Substring(msg.IndexOf(":")+1);
-        Debug.Log("Parsing from "+light_sensor_message);
+        //Debug.Log("Parsing light from "+light_sensor_message);
         light_sensor_read_value = int.Parse(light_sensor_message);
-        msg = msg.Remove(0, msg.IndexOf(",")+1);
 
         water_sensor_read_value = sensor_message[2].Contains("TRUE");
+
+        string heat_sensor_message = sensor_message[3].Substring(msg.IndexOf(":"));
+        //Debug.Log("Parsing heat from "+heat_sensor_message);
+        heat_sensor_read_value = int.Parse(heat_sensor_message);
             
         if(sensor_calibration_cycles == 0) {
             //State-based actions
@@ -195,31 +212,28 @@ public class WorldManager : MonoBehaviour
             //}
 
             // Water State
-            if (water_sensor_read_value && !rainOn)
+            if (water_sensor_read_value)
             {
-                rainOn = true;
-                rainParticleSystems[0].Play();
+                if(!rainOn) {
+                    rainOn = true;
+                    rainParticleSystems[0].Play();
+                }
             }
             else
             {
                 rainOn = false;
                 rainParticleSystems[0].Pause();
+                rainParticleSystems[0].Clear();
             }
 
-            /* Replace with new hold effect for touch sensor
-            if(touch_sensor_cooldown > 0) {
-                touch_sensor_cooldown -= Time.deltaTime;
-                //Debug.Log("touch sensor jiggle time left: "+touch_sensor_cooldown);
-
-                //Jiggle
-                go_cube_world.transform.localPosition += Time.deltaTime*Mathf.Sin(8*touch_sensor_cooldown)*Vector3.right +
-                        Time.deltaTime*Mathf.Cos(18*touch_sensor_cooldown)*Vector3.up;
-            } else if(touch_sensor_read_value) {
-                touch_sensor_cooldown = Mathf.PI/2;
-            } */
+            // Replace with new hold effect for touch sensor
+            if(touch_sensor_cooldown <= 0 && touch_sensor_read_value) {
+                //Debug.Log("TOuch sensor read");
+                touch_sensor_cooldown = Mathf.PI/4;
+            } 
 
             //Persistent VFX
-            Debug.Log("Comparing light value of "+light_sensor_read_value+" against calibrated "+light_sensor_calibrated_value);
+            //Debug.Log("Comparing light value of "+light_sensor_read_value+" against calibrated "+light_sensor_calibrated_value);
             float light_ratio = (float)(light_sensor_read_value - light_sensor_calibrated_value) / (light_sensor_thresholds[2] - light_sensor_thresholds[0]);
             light_ratio = Mathf.Max(Mathf.Min(light_ratio, 1), -1);
             vfx_lighting.intensity = light_ratio * 2.5f + 2.5f;
@@ -232,7 +246,14 @@ public class WorldManager : MonoBehaviour
             light_sensor_calibrated_value += light_sensor_read_value;
             light_sensor_calibrated_value = light_sensor_calibrated_value/2;
 
+            heat_sensor_calibrated_value += heat_sensor_read_value;
+            heat_sensor_calibrated_value = heat_sensor_calibrated_value/2;
+
             --sensor_calibration_cycles;
         }
+    }
+
+    public void Recalibrate_Sensors() {
+        sensor_calibration_cycles = 15;
     }
 }

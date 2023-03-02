@@ -24,7 +24,7 @@ void loop() {
     isTouching = digitalRead(2); 
     int light = analogRead(A1);
     isWet = digitalRead(3); 
-    //int Vo = analogRead(A2);
+    int heat = analogRead(A2);
     
     // Touch 
     if(isTouching) {
@@ -36,11 +36,15 @@ void loop() {
     //Light 
     Serial.print(",Light:"+String(light));
     
+    //Water
     if(isWet) {
-      Serial.println(",Water:TRUE"); 
+      Serial.print(",Water:TRUE"); 
     } else {
-      Serial.println(",Water:FALSE"); 
+      Serial.print(",Water:FALSE"); 
     }
+    
+    //Heat
+    Serial.println(",Heat:"+String(heat));
     
     delay(20); 
 }
