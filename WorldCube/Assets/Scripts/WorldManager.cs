@@ -7,7 +7,7 @@ public class WorldManager : MonoBehaviour
     //Sensor variables from IRL
     public int light_sensor_read_value;
     public int heat_sensor_read_value;
-    public int water_sensor_read_value;
+    public bool water_sensor_read_value;
     public bool touch_sensor_read_value;
     public int pressure_sensor_read_value;
     public int sound_sensor_read_value;
@@ -16,8 +16,6 @@ public class WorldManager : MonoBehaviour
     private int sensor_calibration_cycles = 15;
     private int light_sensor_calibrated_value;
     private int heat_sensor_calibrated_value;
-    private int water_sensor_calibrated_value;
-    private bool touch_sensor_calibrated_value;
     private int pressure_sensor_calibrated_value;
     private int sound_sensor_calibrated_value;
 
@@ -25,8 +23,8 @@ public class WorldManager : MonoBehaviour
     private int threshold_modifier = 25;
     private int[] light_sensor_thresholds = new int[] {-200, 0, 200};
     private int[] heat_sensor_thresholds = new int[] {0, 100, 200};
-    private int[] water_sensor_thresholds = new int[] {0, 5, 10};
-    private float touch_sensor_cooldown = 0;
+    //private float water_sensor_cooldown = 0;
+    //private float touch_sensor_cooldown = 0;
     private int[] pressure_sensor_thresholds = new int[] {0, 150, 300};
     private int[] sound_sensor_thresholds = new int[] {0, 150, 300};
 
@@ -63,31 +61,39 @@ public class WorldManager : MonoBehaviour
         //Calculate HIGH, MED, and LOW values
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnMessageArrived(string msg) {
+        //Read sensor values from Serial
+        Debug.Log("New message for WorldManager: "+msg);
+        UpdateValues(msg);
+    }
+
+    void OnConnectionEvent(bool success)
     {
-        if(sensor_calibration_cycles > 0) {
-            //Read sensor values from Serial
-            if(Input.GetKey("up")) {
-                light_sensor_read_value++;
-            } else if(Input.GetKey("down")) {
-                light_sensor_read_value--;
-            }
+        if (success) {
+            print("Connected");
+        }
+        else
+        {
+            print("Disconnected");
+        }
+    }
 
-            if(Input.GetKey("right")) {
-                heat_sensor_read_value++;
-            } else if(Input.GetKey("left")) {
-                heat_sensor_read_value--;
-            }
+    // Update is called once per frame
+    void UpdateValues(string msg)
+    {
+        //Decypher and update tracked values
+        string[] sensor_message = msg.Split(',');
+        touch_sensor_read_value = sensor_message[0].Contains("TRUE");
+        msg = msg.Remove(0, msg.IndexOf(",")+1);
 
-            if(Input.GetKey("space")) {
-                touch_sensor_read_value = true;
-            } else {
-                touch_sensor_read_value = false;
-            }
+        string light_sensor_message = sensor_message[1].Substring(msg.IndexOf(":")+1);
+        Debug.Log("Parsing from "+light_sensor_message);
+        light_sensor_read_value = int.Parse(light_sensor_message);
+        msg = msg.Remove(0, msg.IndexOf(",")+1);
 
-            //Decypher and update tracked values
-
+        water_sensor_read_value = sensor_message[2].Contains("TRUE");
+            
+        if(sensor_calibration_cycles == 0) {
             //State-based actions
             if(light_state == sensor_state.high) {
                 //Display appropriate VFX
@@ -177,6 +183,7 @@ public class WorldManager : MonoBehaviour
                 }
             }
 
+            /* Replace with new hold effect for touch sensor
             if(touch_sensor_cooldown > 0) {
                 touch_sensor_cooldown -= Time.deltaTime;
                 //Debug.Log("touch sensor jiggle time left: "+touch_sensor_cooldown);
@@ -186,9 +193,10 @@ public class WorldManager : MonoBehaviour
                         Time.deltaTime*Mathf.Cos(18*touch_sensor_cooldown)*Vector3.up;
             } else if(touch_sensor_read_value) {
                 touch_sensor_cooldown = Mathf.PI/2;
-            }
+            } */
 
             //Persistent VFX
+            Debug.Log("Comparing light value of "+light_sensor_read_value+" against calibrated "+light_sensor_calibrated_value);
             float light_ratio = (float)(light_sensor_read_value - light_sensor_calibrated_value) / (light_sensor_thresholds[2] - light_sensor_thresholds[0]);
             light_ratio = Mathf.Max(Mathf.Min(light_ratio, 1), -1);
             vfx_lighting.intensity = light_ratio * 2.5f + 2.5f;
@@ -197,11 +205,9 @@ public class WorldManager : MonoBehaviour
             heat_ratio = Mathf.Max(Mathf.Min(heat_ratio, 1), -1);
             Color heat_color = heat_ratio*vfx_hot_material.color + (1-heat_ratio)*vfx_cold_material.color;
             go_cube_world.GetComponent<Renderer>().material.SetColor("_Color", heat_color);
-
         } else {
-            //Read sensor values from Serial
-
-            //Decypher and update tracked values
+            light_sensor_calibrated_value += light_sensor_read_value;
+            light_sensor_calibrated_value = light_sensor_calibrated_value/2;
 
             --sensor_calibration_cycles;
         }
