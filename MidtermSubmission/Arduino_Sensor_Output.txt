@@ -1,0 +1,50 @@
+/*
+  Inputs for Alternative controller cube gam 
+*/
+
+// TOUCH INPUT
+int isTouching = LOW; 
+
+// LIGHT INPUT
+int startingLight = 0; 
+int lightOn = LOW;
+
+// Water input 
+int isWet = LOW; 
+
+void setup() {
+    Serial.begin(9600); 
+    
+    startingLight = analogRead(A1);
+}
+
+void loop() {
+  
+    //sensing 
+    isTouching = digitalRead(2); 
+    int light = analogRead(A1);
+    isWet = digitalRead(3); 
+    int heat = analogRead(A2);
+    
+    // Touch 
+    if(isTouching) {
+      Serial.print("Touch:TRUE"); 
+    } else {
+      Serial.print("Touch:FALSE"); 
+    }
+    
+    //Light 
+    Serial.print(",Light:"+String(light));
+    
+    //Water
+    if(isWet) {
+      Serial.print(",Water:TRUE"); 
+    } else {
+      Serial.print(",Water:FALSE"); 
+    }
+    
+    //Heat
+    Serial.println(",Heat:"+String(heat));
+    
+    delay(20); 
+}
