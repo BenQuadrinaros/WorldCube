@@ -29,26 +29,28 @@ public class WorldManager : MonoBehaviour
     private int[] sound_sensor_thresholds = new int[] {0, 150, 300};
 
     //States for combining
-    enum sensor_state {
+    public enum sensor_state {
         low    = 0,
         medium = 1,
         high   = 2,
     }
-    private sensor_state light_state = sensor_state.medium;
-    private sensor_state heat_state = sensor_state.low;
-    private sensor_state water_state = sensor_state.low;
-    private sensor_state touch_state = sensor_state.low;
-    private sensor_state pressure_state = sensor_state.low;
-    private sensor_state sound_state = sensor_state.low;
+    public sensor_state light_state = sensor_state.medium;
+    public sensor_state heat_state = sensor_state.low;
+    public sensor_state water_state = sensor_state.low;
+    public sensor_state touch_state = sensor_state.low;
+    public sensor_state pressure_state = sensor_state.low;
+    public sensor_state sound_state = sensor_state.low;
 
     //VFX for extreme states
     public ParticleSystem[] rainParticleSystems;
     private bool rainOn = false;
     //VFX for persistent effects
-    public GameObject go_cube_world;
-    public Light vfx_lighting;
-    public Material vfx_cold_material;
-    public Material vfx_hot_material;
+    [SerializeField] private GameObject go_cube_world;
+    private ResourceManager resource_manager;
+    private CivilizationController civ_controller;
+    [SerializeField] private Light vfx_lighting;
+    [SerializeField] private Material vfx_cold_material;
+    [SerializeField] private Material vfx_hot_material;
 
     // Start is called before the first frame update
     void Start()
@@ -58,6 +60,10 @@ public class WorldManager : MonoBehaviour
         light_sensor_read_value = 500;
         heat_sensor_calibrated_value = 200;
         heat_sensor_read_value = 200;
+
+        //Set references
+        resource_manager = go_cube_world.GetComponent<ResourceManager>();
+        civ_controller = go_cube_world.GetComponent<CivilizationController>();
 
         //Calculate HIGH, MED, and LOW values
     }
@@ -242,6 +248,8 @@ public class WorldManager : MonoBehaviour
             heat_ratio = Mathf.Max(Mathf.Min(heat_ratio, 1), -1);
             Color heat_color = heat_ratio*vfx_hot_material.color + (1-heat_ratio)*vfx_cold_material.color;
             go_cube_world.GetComponent<Renderer>().material.SetColor("_Color", heat_color);
+
+            resource_manager.UpdateValues(this);
         } else {
             light_sensor_calibrated_value += light_sensor_read_value;
             light_sensor_calibrated_value = light_sensor_calibrated_value/2;
