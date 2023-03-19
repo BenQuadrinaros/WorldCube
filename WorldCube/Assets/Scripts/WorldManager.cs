@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class WorldManager : MonoBehaviour
 {
+    public static WorldManager instance;
     //Sensor variables from IRL
     public int light_sensor_read_value;
     public int heat_sensor_read_value;
@@ -51,6 +52,11 @@ public class WorldManager : MonoBehaviour
     [SerializeField] private Light vfx_lighting;
     [SerializeField] private Material vfx_cold_material;
     [SerializeField] private Material vfx_hot_material;
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     // Start is called before the first frame update
     void Start()

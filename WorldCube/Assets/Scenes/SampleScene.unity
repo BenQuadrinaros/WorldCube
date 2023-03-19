@@ -1278,7 +1278,7 @@ GameObject:
   - component: {fileID: 623346138}
   - component: {fileID: 623346137}
   - component: {fileID: 623346136}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1520,7 +1520,7 @@ GameObject:
   - component: {fileID: 790131950}
   - component: {fileID: 790131949}
   - component: {fileID: 790131948}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2203,6 +2203,7 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
+  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2276,6 +2277,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61104722a18de6840a8f79040b6de194, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1068818192
 GameObject:
   m_ObjectHideFlags: 0
@@ -2363,7 +2379,7 @@ GameObject:
   - component: {fileID: 1075282626}
   - component: {fileID: 1075282625}
   - component: {fileID: 1075282624}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7479,7 +7495,7 @@ GameObject:
   - component: {fileID: 1131302639}
   - component: {fileID: 1131302638}
   - component: {fileID: 1131302637}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7608,7 +7624,7 @@ GameObject:
   - component: {fileID: 1279754946}
   - component: {fileID: 1279754945}
   - component: {fileID: 1279754944}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9696,13 +9712,13 @@ Transform:
   - {fileID: 386019625}
   - {fileID: 2062508156}
   - {fileID: 2070443388}
-  - {fileID: 7441275670270441570}
-  - {fileID: 896400118}
-  - {fileID: 1085991807}
-  - {fileID: 640719887}
   - {fileID: 849901603}
+  - {fileID: 1085991807}
   - {fileID: 1127530407}
   - {fileID: 1825658794}
+  - {fileID: 7441275670270441570}
+  - {fileID: 896400118}
+  - {fileID: 640719887}
   - {fileID: 1916589592}
   - {fileID: 150942289}
   - {fileID: 884178747}
