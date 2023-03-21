@@ -6,7 +6,7 @@ public class CivilizationController : MonoBehaviour
 {
     //Resources required for advancing through civilization stages
     private int civilization_stage = 0;
-    private ResourceManager resource_manager;
+    public ResourceManager resource_manager;
     private int[] required_resource_amounts = new int[] {1, 1, 1, 1, 1};
     private Dictionary<ResourceManager.resource_types, int> civilization_resource_stores;
 
@@ -19,10 +19,10 @@ public class CivilizationController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        resource_manager = gameObject.GetComponent<ResourceManager>();
-        for(int i = 0; i < 5; ++i) {
-            civilization_resource_stores.Add((ResourceManager.resource_types)i, 0);
-        }
+        //resource_manager = gameObject.GetComponent<ResourceManager>();
+        //for(int i = 0; i < 5; ++i) {
+        //    civilization_resource_stores.Add((ResourceManager.resource_types)i, 0);
+        //}
         
         GameObject[] temp = GameObject.FindGameObjectsWithTag("Peep");
         peeps = new List<GameObject>();
@@ -39,14 +39,16 @@ public class CivilizationController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(civilization_resource_stores[(ResourceManager.resource_types)civilization_stage] > required_resource_amounts[civilization_stage]) {
-            //Upgrade buildings
-            foreach(GameObject building in buildings) {
+        //if (civilization_resource_stores[(ResourceManager.resource_types)civilization_stage] > required_resource_amounts[civilization_stage])
+        //{
+        //    //Upgrade buildings
+        //    foreach (GameObject building in buildings)
+        //    {
 
-            }
+        //    }
 
-            civilization_resource_stores[(ResourceManager.resource_types)civilization_stage] -= required_resource_amounts[civilization_stage];
-            ++civilization_stage;
-        }
+        //    civilization_resource_stores[(ResourceManager.resource_types)civilization_stage] -= required_resource_amounts[civilization_stage];
+        //    ++civilization_stage;
+        //}
     }
 }
